@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <title></title>
+  <link rel="stylesheet" href="/css/receipt.css">
+</head>
+<body>
+  <nav>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="receipt.html">Receive</a></li>
+      <li><a href="issue.html">Issue</a></li>
+      <li><a href="stockSummary.html">Stock Summary</a></li>
+      <li><a href="">Stock Take</a></li>
+      <li><a href="">Orders</a></li>
+    </ul>
+  </nav>
+
+  <div class="input">
+    <label for="date"></label>
+    <input id="date"type="date" value="new Date().toLacaleTimeString()">
+    <label for="source"> Source:</label>
+    <input id="source"type="text">
+    <label for="s11"> S11 No:</label>
+    <input id="s11" type="text" autocomplete="off">
+  </div>
+
+  <h2 style="background-color: #00783e; text-align: center;color: #ffffff;">Receive Items</h2>
+
+  <input id="search" type="text" placeholder="Search item" autocomplete="off">
+
+    <div class="disp" ></div>
+
+  <div class="table" style="border: 2px solid green;">
+    <table>
+      <thead>
+        <tr>
+          <th>Code</th>
+          <th>Name</th>
+          <th>Quantity</th>
+          <th>Cost</th>
+        </tr>
+      </thead>
+        <tbody>
+        </tbody>
+    </table>
+  </div>
+  <div id="save"> <button type="button">Save</button></div>
+
+  <script type="text/javascript" src="./js/receipt.js"></script>
+
+  <script type="text/javascript">
+
+</script>
+</body>
+</html>

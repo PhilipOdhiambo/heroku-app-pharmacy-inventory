@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <script type="text/javascript" src="./js/stockSummary.js"></script>
+  </head>
+  <body style="background-color: #B0DFE5;">
+    <nav>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="receipt.html">Receive</a></li>
+        <li><a href="issue.html">Issue</a></li>
+        <li><a href="stockSummary.html">Stock Summary</a></li>
+        <li><a href="">Stock Take</a></li>
+        <li><a href="">Orders</a></li>
+      </ul>
+    </nav>
+
+    <h2 style="background-color: #1034A6; text-align: center;color: #ffffff;">Stock Summary</h2>
+
+    <div class="criteria">
+
+    </div>
+    <div class="table">
+      <table>
+        <thead>
+          <tr>
+            <th>Code</th> <th>Item Name</th> <th>Received</th> <th>Issued</th> <th>Current Stock</th>
+          </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+      </table>
+    </div>
+    <script type="text/javascript">
+      fetchCurrentStock().then(stock => {
+        let result = '';
+        stock.forEach(stockItem => {
+          result += "<tr>"
+          result += `<td>${stockItem.Item_Code}</td>`;
+          result += `<td>${stockItem.Item_Name}</td>`;
+          result += `<td>${stockItem.Receipt_Qty}</td>`;
+          result += `<td>${stockItem.Issue_Qty}</td>`;
+          result += `<td>${stockItem.Current_Stock}</td>`;
+          result += "<tr>";
+        });
+        let tbody = document.getElementsByTagName('tbody')[0];
+        tbody.innerHTML = result;
+      });
+    </script>
+  </body>
+</html>

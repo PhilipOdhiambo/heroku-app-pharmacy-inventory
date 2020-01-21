@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <title></title>
+  <style media="screen">
+    .item {
+      padding: 2px;
+      cursor: pointer;
+      background-color: #fff;
+      border: 1px solid #d4d4d4;
+
+    }
+    .item:hover {
+      /*when hovering an item:*/
+      background-color: #e9e9e9;
+    }
+    table {
+      border-collapse: collapse;
+      margin: 25px 0;
+      font-size: 0.9em;
+      min-width: 400px;
+    }
+    table thead tr {
+      background-color: #009879;
+      color: #ffffff;
+      text-align: left;
+    }
+    th,td {padding: 0px 10px 0px 10px;}
+    tbody tr {border-bottom: 2px  solid #dddddd;}
+    tbody tr:nth-of-type(odd){background-color: #f3f3f3;}
+    tbody tr:last-of-type {border-bottom: 2px solid #009879;}
+    table tbody { height:300px; overflow-y:scroll; display:block; }
+    table thead { display:block; }
+    .qtyErr {color: red; border: 2px dotted red;}
+
+  </style>
+</head>
+<body style="background-color:#e8ccd7;">
+  <nav>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="receipt.html">Receive</a></li>
+      <li><a href="issue.html">Issue</a></li>
+      <li><a href="stockSummary.html">Stock Summary</a></li>
+      <li><a href="">Stock Take</a></li>
+      <li><a href="">Orders</a></li>
+    </ul>
+  </nav>
+
+  <h2 style="background-color:#800080; text-align: center;color: #ffffff;">Issue Items</h2>
+  <div class="parent" style="position: relative;">
+    <input type="date" name="" value="new Date().toLacaleTimeString()" readonly="write">
+    <br>
+    <label for="from"></label><input type="text" name="from" value="">
+    <label for="s11"><input id="s11" name="s11" value="" placeholder="(Required)" autocomplete="off">
+      <br>
+      <div class="search">
+        <input id="search" name="" value="" placeholder="Search item" autocomplete="off">
+        <button id="button" name="button">Add</button>
+      </div>
+      <div id="display" style="height: auto; position:absolute;
+      left:0; min-width: 200px;width: auto; z-index: 3;"></div>
+    </div>
+
+    <div class="table" style="border: 2px solid #800080;">
+      <table>
+        <thead>
+          <tr>
+            <th>Code</th>
+            <th>Name</th>
+            <th>Quantity</th>
+            <th>Cost</th>
+          </tr>
+          <tbody>
+
+          </tbody>
+        </thead>
+      </table>
+    </div>
+    <div id="save"> <button type="button" name="button">Save</button> </div>
+
+    <script type="text/javascript">
+
+      // Declare DOM elements and globlal variables
+      const searchBox = document.querySelector('#search');
+      const button = document.querySelector('button');
+      const saveBtn = document.querySelector('#save');
+      const tableDiv = document.querySelector('.table');
+      var displayDiv = document.querySelector('#display');
+      var data;
+
+      // Add event listeners
+      // 1) listen to searchbox input
+      searchBox.addEventListener('input',() => {
+        displayDiv.innerHTML = '';
+        if (searchBox.value.length > 3) {
+          fetch(`/list/${encodeURIComponent(searchBox.value)}`).then(response =>{
+            return response.json();
+          }).then(content => {
+            data = content;
+            data.forEach(item =>{
+              displayDiv.innerHTML += `<div class="item"> ${item.Item_Name}</div>`;
+            });
+          });
+        }
+      });
+
+      // 2) listen to dropdown list click
+      displayDiv.addEventListener('click', e =>{
+        var d = data.find(item =>{
+          return item.Item_Name === e.target.innerText;
+        });
+        var tbody = document.querySelector('tbody');
+        tbody.innerHTML += `
+        <tr>
+          <td class="Item_Code">${d.Item_Code}</td>
+          <td class="Item_Name">${d.Item_Name}</td>
+          <td><input class="Receive_Qty" placeholder="quantity" oninput="isInt(this)" style="background:transparent; border:none;"></td>
+          <td class="Item_Price">${d.Item_Price}</td>
+        </tr>
+        `;
+        // Clear the search box and the dropdown list
+        displayDiv.innerHTML = '';
+        searchBox.value = '';
+      });
+
+      // 3) Listen if the user click outside the dropdown list
+      document.addEventListener('click', e=>{
+        if (e.target.className ==! 'list') displayDiv.innerHTML = "";
+      });
+
+      // Save Receipts to the database
+      // 1) Check if user keyed wrong input
+      function isInt(el) {
+        if (parseInt(el.value) == el.value) {
+          el.setAttribute('class','');
+          return true;
+        }
+        else el.setAttribute('class','qtyErr');
+        return false;
+      };
+
+      function isEmpty(el) {
+        if(el.value === "") {
+          el.setAttribute('class','qtyErr');
+          return true;
+        }
+        else {
+          el.setAttribute('class','');
+          return false;
+        }
+      }
+
+
+      saveBtn.addEventListener('click', () =>{
+        var receiptDocs = [];
+        var rows = document.querySelector('tbody').rows;
+        var s11 = document.querySelector('#s11');
+
+        if (isEmpty(s11)) return;
+        if (!rows) return;
+        Array.from(rows).forEach(row =>{
+          var inputCol = row.cells[2].querySelector('input');
+          if (isInt(inputCol)) {
+            receiptDocs.push({
+              Issue_Date: new Date(),
+              Ref_Code: s11.value,
+              Issue_Destination: "Main hosp",
+              Item_Code: row.cells[0].innerText,
+              Item_Name: row.cells[1].innerText,
+              Issue_Qty: parseInt(inputCol.value),
+              Issue_By: 'tl'
+            });
+          }
+          else {
+            receiptDocs = [];
+            input.setAttribute('class','qtyErr')
+            return;
+          }
+          sendData(receiptDocs);
+        });
+
+      });
+
+      // Posting data
+      // Make a post request to server using fetch API
+      function sendData(data) {
+        const options = {method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+      };
+      fetch('/issue', options).then((rawRes) => {
+        return rawRes.text();
+      }).then(myRes => {
+        console.log(myRes);
+      });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <h1>Contact page</h1>
+  <body>
+    <div class="displayer">
+
+    </div>
+
+    <script type="text/javascript">
+      const data = {'name': 'Odhiambo'};
+      const options = {method: 'POST', headers: {'Content-Type': 'application/json'},body: JSON.stringify(data)};
+
+      fetch('/contact',options).then((rawRes) => {
+        return rawRes.json();
+      }).then(myRes => {
+        console.log(myRes);
+      });
+
+
+    </script>
+  </body>
+</html>
