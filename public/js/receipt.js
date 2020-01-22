@@ -1,7 +1,7 @@
 // Declare DOM elements and globlal variables
 const saveBtn = document.querySelector('#save');
 const tableDiv = document.querySelector('.table');
-var displayDiv = document.querySelector('.disp');
+var displayDiv = document.querySelector('.display');
 let searchBox = document.querySelector('#search');
 
 async function searchAndSave() {
@@ -12,7 +12,6 @@ async function searchAndSave() {
   searchBox.addEventListener('input', (e) => {
     displayDiv.innerHTML = '';
     if (searchBox.value.length > 2) {
-
       const filter = inventory.filter(item => {
         let regex = new RegExp(searchBox.value,'i');
         return (regex.test(item.Item_Name)|| regex.test(item.Item_Code));
@@ -22,7 +21,6 @@ async function searchAndSave() {
         displayDiv.innerHTML += `<div class="item"> ${filterItem.Item_Name}</div>`;
       });
     }
-
   });
 
   // 2) listen to dropdown list click
@@ -36,7 +34,7 @@ async function searchAndSave() {
     <tr>
     <td class="Item_Code">${clickedItem.Item_Code}</td>
     <td class="Item_Name">${clickedItem.Item_Name}</td>
-    <td><input class="Receive_Qty"></td>
+    <td><input class="Receive_Qty" type="text"> </td>
     <td class="Item_Price">${clickedItem.Item_Price}</td>
     </tr>
     `;
@@ -45,7 +43,10 @@ async function searchAndSave() {
     searchBox.value = '';
   });
 }
+
 searchAndSave();
+
+
 
 
 // 3) Listen if the user click outside the dropdown list
@@ -77,23 +78,20 @@ saveBtn.addEventListener('click', () =>{
     else {
       receiptDocs = [];
       input.setAttribute('class','qtyErr')
-      return;
     }
-    sendData(receiptDocs);
+    // Posting data
+    // Make a post request to server using fetch API
+    function sendData(data) {
+      const options = {method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(data)
+    };
+    fetch('/receipt', options).then((rawRes) => {
+      return rawRes.text();
+    }).then(myRes => {
+      console.log(myRes);
+    });
+    }
   });
 
 });
-
-// Posting data
-// Make a post request to server using fetch API
-function sendData(data) {
-  const options = {method: 'POST',
-  headers: {'Content-Type': 'application/json'},
-  body: JSON.stringify(data)
-};
-fetch('/receipt', options).then((rawRes) => {
-  return rawRes.text();
-}).then(myRes => {
-  console.log(myRes);
-});
-}
