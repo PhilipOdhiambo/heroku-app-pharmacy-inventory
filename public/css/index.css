@@ -1,0 +1,25 @@
+body {
+  background-color: #5c8ca4;
+  font-size: 14;
+  font-family: sans-serif;
+}
+
+* {margin: 0; padding: 0;}
+body {
+  background-color: #c5e1a5;
+  font-family: sans-serif;
+  font-size: 12;
+}
+
+nav {
+  background-color: #0b6623;
+  font-size: 1.5em;
+}
+nav a { color: #ffff; text-decoration: none;}
+nav ul {
+  display: flex;
+  list-style: none;
+  flex-direction:row;
+}
+nav li {padding: 10px;}
+nav ul li:hover { background-color: lightgreen;}
